@@ -1,0 +1,4 @@
+---
+- hosts: datastores
+  include: mysql_replication.yml
+  when: {{MYSQL_REPLICATION}}

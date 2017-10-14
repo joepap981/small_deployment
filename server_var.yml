@@ -75,3 +75,5 @@ EDXAPP_PRESS_EMAIL: 'press@example.com'
 #SSL Use (default : "{{ EDXAPP_LMS_BASE_SCHEME | default('https') }}://{{ EDXAPP_LMS_BASE }}") """httpS"
 EDXAPP_LMS_ROOT_URL: "{{ EDXAPP_LMS_BASE_SCHEME | default('http') }}://{{ EDXAPP_LMS_BASE }}"
 
+#mySQL replication check
+MYSQL_REPLICATION: true

@@ -1,0 +1,77 @@
+---
+
+#Platform settings
+EDXAPP_PLATFORM_NAME: 'HandongX'
+EDXAPP_PLATFORM_DESCRIPTION: 'Handong MOOC'
+
+EDXAPP_SITE_NAME: 'localhost'
+EDXAPP_LMS_SITE_NAME: "{{ EDXAPP_SITE_NAME }}"
+EDXAPP_CMS_SITE_NAME: 'localhost'
+
+EDXAPP_STUDIO_NAME: 'Studio'
+EDXAPP_STUDIO_SHORT_NAME: 'Studio'
+
+#MySQL Authentication settings
+EDXAPP_MYSQL_DB_NAME: 'edxapp'
+EDXAPP_MYSQL_USER: 'edxapp001'
+EDXAPP_MYSQL_PASSWORD: 'password'
+
+XQUEUE_MYSQL_DB_NAME: ''
+XQUEUE_MYSQL_USER: 'xqueue001'
+XQUEUE_MYSQL_PASSWORD: 'password'
+
+COMMON_MYSQL_READ_ONLY_USER: 'read_only'
+COMMON_MYSQL_READ_ONLY_PASS: 'password'
+
+COMMON_MYSQL_ADMIN_USER: 'admin'
+COMMON_MYSQL_ADMIN_PASS: 'password'
+
+COMMON_MYSQL_MIGRATE_USER: 'migrate'
+COMMON_MYSQL_MIGRATE_PASS: 'password'
+
+#MongoDB Authentication settings
+
+EDXAPP_MONGO_PASSWORD: 'password'
+EDXAPP_MONGO_PORT: 27017
+EDXAPP_MONGO_USER: 'edxapp'
+EDXAPP_MONGO_DB_NAME: 'edxapp'
+EDXAPP_MONGO_USE_SSL: False
+
+#SMTP settings for gmail
+EDXAPP_EMAIL_BACKEND: 'django.core.mail.backends.smtp.EmailBackend'
+EDXAPP_EMAIL_HOST: 'smtp.gmail.com'
+EDXAPP_EMAIL_PORT: 587
+EDXAPP_EMAIL_USE_TLS: True
+EDXAPP_EMAIL_HOST_USER: 'handongmooc@gmail.com'
+EDXAPP_EMAIL_HOST_PASSWORD: ''
+
+
+#registeration fields
+EDXAPP_REGISTRATION_EXTRA_FIELDS:
+  confirm_email: "hidden"
+  level_of_education: "optional"
+  gender: "optional"
+  year_of_birth: "optional"
+  mailing_address: "hidden"
+  goals: "optional"
+  honor_code: "required"
+  terms_of_service: "hidden"
+  city: "hidden"
+  country: "required"
+
+
+#Email
+EDXAPP_TECH_SUPPORT_EMAIL: 'technical@example.com'
+EDXAPP_CONTACT_EMAIL: 'info@example.com'
+EDXAPP_BUGS_EMAIL: 'bugs@example.com'
+EDXAPP_DEFAULT_FROM_EMAIL: 'registration@example.com'
+EDXAPP_DEFAULT_FEEDBACK_EMAIL: 'feedback@example.com'
+EDXAPP_DEFAULT_SERVER_EMAIL: 'devops@example.com'
+EDXAPP_BULK_EMAIL_DEFAULT_FROM_EMAIL: 'no-reply@example.com'
+EDXAPP_BULK_EMAIL_LOG_SENT_EMAILS: false
+EDXAPP_UNIVERSITY_EMAIL: 'university@example.com'
+EDXAPP_PRESS_EMAIL: 'press@example.com'
+
+#SSL Use (default : "{{ EDXAPP_LMS_BASE_SCHEME | default('https') }}://{{ EDXAPP_LMS_BASE }}") """httpS"
+EDXAPP_LMS_ROOT_URL: "{{ EDXAPP_LMS_BASE_SCHEME | default('http') }}://{{ EDXAPP_LMS_BASE }}"
+

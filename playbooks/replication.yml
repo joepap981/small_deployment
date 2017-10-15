@@ -63,17 +63,24 @@
   register: master_status
 
 #migrate database from master to slave
-- name: Dump all databases to hostname.sql
+- name: Dump all databases to migrate.sql
   mysql_db:
     state: dump
-    name: all
+    name: "{{ item }}"
     target: /tmp/migrate.sql
+  with_items:
+    - ecommerce
+    - edxapp
+    - edxapp_csmh
+    - xqueue
 
 - name: Fetch migration database from Master
-  copy:
-    src: "/tmp/'{{ groups['datastores'][0] }}'/tmp/migrate.sql"
-    dest: /tmp/migrate.sql
-  delegate_to: "{{ groups['mysql_slave'][0] }}"
+  shell: scp root@{{ groups['datastores'][0] }}:/tmp/migrate.sql ~/
+  delegate_to: "127.0.0.1"
+
+- name: Send migration database to Slave
+  shell: scp ~/migrate.sql root@{{ groups['mysql_slave'][0] }}:/tmp/migrate.sql
+  delegate_to: "127.0.0.1"
 
 - name: Import migrate.sql
   mysql_db:

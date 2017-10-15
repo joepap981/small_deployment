@@ -1,5 +1,5 @@
 ---
-- hosts: mysql_slave
+- hosts: datastores
   vars_files:
     - "../server_var.yml"
   tasks:

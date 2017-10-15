@@ -15,6 +15,7 @@
 #    EDXLOCAL_MYSQL_ALLOWED_HOST: "203.252.119.102"
 #    rabbitmq_ip: "{{ groups['datastores'][0] }}"
   vars_files:
+    - "../server_var.yml"
     - "/var/tmp/configuration/playbooks/roles/edxapp/defaults/main.yml"
     - "/var/tmp/configuration/playbooks/roles/forum/defaults/main.yml"
     - "/var/tmp/configuration/playbooks/roles/xqueue/defaults/main.yml"
@@ -39,3 +40,5 @@
   tasks:
     - include: create_mysql_users.yml
     - include: address_binding.yml
+    - include: mysql_master_conf.yml
+      when: MYSQL_REPLICATION == true

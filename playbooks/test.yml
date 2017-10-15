@@ -1,8 +1,14 @@
 ---
 - hosts: datastores
+  vars_files:
+    - "../server_var.yml"
   tasks:
-    - name: Including this playbook
-      debug: 
-        msg: "This is a test"
+    - include: mysql_master_conf.yml
+      when: MYSQL_REPLICATION  == true
 
-    - include: ./mysql_replication.yml
+- hosts: mysql_slave
+  vars_files:
+    - "../server_var.yml"
+  tasks:
+    - include: mysql_slave_conf.yml
+      when: MYSQL_REPLICATION == true

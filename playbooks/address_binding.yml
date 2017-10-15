@@ -1,28 +1,28 @@
 ---
-- hosts: datastores
-  become: true
-  tasks:
-    - name: Set MySQL bind-address
-      lineinfile:
-        dest: /etc/mysql/mysql.conf.d/mysqld.cnf
-        regexp: '^bind-address'
-        line: 'bind-address = 0.0.0.0'
-    - service:
-        name: mysql
-        state: restarted
-    - name: Set MongoDB bind_ip
-      lineinfile:
-        dest: /etc/mongod.conf
-        regexp: '^bind_ip'
-        line: 'bind_ip = 0.0.0.0'
-    - service:
-        name: mongod
-        state: restarted
-    - name: Set memcached address
-      lineinfile:
-        dest: /etc/memcached.conf
-        regexp: '^-l'
-        line: '-l 0.0.0.0'
-    - service:
-        name: memcached
-        state: restarted
+- name: Set MySQL bind-address
+  lineinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: '^bind-address'
+    line: 'bind-address = 0.0.0.0'
+- name: Restart mySQL
+    service:
+      name: mysql
+      state: restarted
+- name: Set MongoDB bind_ip
+  lineinfile:
+    dest: /etc/mongod.conf
+    regexp: '^bind_ip'
+    line: 'bind_ip = 0.0.0.0'
+- name: Restart mongod
+    service:
+      name: mongod
+      state: restarted
+- name: Set memcached address
+  lineinfile:
+    dest: /etc/memcached.conf
+    regexp: '^-l'
+    line: '-l 0.0.0.0'
+- name: Restart memcached
+    service:
+      name: memcached
+      state: restarted

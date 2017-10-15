@@ -1,37 +1,30 @@
 ---
-- hosts: datastores 
-  become: true
-  vars_files:
-    - ../server_var.yml
-  vars:
-    
-  tasks:
-    - name: Give privilege to mysql_user edxapp
-      mysql_user:
-        user={{ EDXAPP_MYSQL_USER }}
-        host={{ STATELESS_HOST }}
-        password={{ EDXAPP_MYSQL_PASSWORD }}
-        state=present
-        priv='*.*:ALL'
-    - name: Give privilege to mysql_user xqueue
-      mysql_user:
-        user={{ XQUEUE_MYSQL_USER }}
-        host={{ STATELESS_HOST }}
-        password={{ XQUEUE_MYSQL_PASSWORD }}
-        state=present
-        priv='*.*:ALL'
-    - name: Give privilege to mysql_user admin
-      mysql_user:
-        user={{ COMMON_MYSQL_ADMIN_USER }}
-        host={{ STATELESS_HOST }}
-        password={{ COMMON_MYSQL_ADMIN_PASS }}
-        state=present
-        priv='*.*:ALL'
-    - name: Give privilege to mysql_user migrate
-      mysql_user:
-        user={{ COMMON_MYSQL_MIGRATE_USER }}
-        host={{ STATELESS_HOST }}
-        password={{ COMMON_MYSQL_MIGRATE_PASS }}
-        state=present
-        priv='*.*:ALL'
+- name: Give privilege to mysql_user edxapp
+  mysql_user:
+    user={{ EDXAPP_MYSQL_USER }}
+    host={{ STATELESS_HOST }}
+    password={{ EDXAPP_MYSQL_PASSWORD }}
+    state=present
+    priv='*.*:ALL'
+- name: Give privilege to mysql_user xqueue
+  mysql_user:
+    user={{ XQUEUE_MYSQL_USER }}
+    host={{ STATELESS_HOST }}
+    password={{ XQUEUE_MYSQL_PASSWORD }}
+    state=present
+    priv='*.*:ALL'
+- name: Give privilege to mysql_user admin
+  mysql_user:
+    user={{ COMMON_MYSQL_ADMIN_USER }}
+    host={{ STATELESS_HOST }}
+    password={{ COMMON_MYSQL_ADMIN_PASS }}
+    state=present
+    priv='*.*:ALL'
+- name: Give privilege to mysql_user migrate
+  mysql_user:
+    user={{ COMMON_MYSQL_MIGRATE_USER }}
+    host={{ STATELESS_HOST }}
+    password={{ COMMON_MYSQL_MIGRATE_PASS }}
+    state=present
+    priv='*.*:ALL'
 

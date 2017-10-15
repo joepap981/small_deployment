@@ -10,6 +10,7 @@
         - { regexp: '^#server-id', line: 'server-id = 1' }
         - { regexp: '^#log_bin', line: '/var/log/mysql/mysql-bin.log' }
         - { regexp: '^max_allowed_packet', line: 'max_allowed_packet      = 1G' }
+    - name: Add binlog info
       blockinfile:
         path: /etc/mysql/mysql.conf.d/mysqld.cnf
         block: |
@@ -17,8 +18,9 @@
           binlog_do_db            = edxapp
           binlog_do_db            = edxapp_csmh
           binlog_do_db            = xqueue
-    - service: mysql
-      state: restarted
+    - service:
+        name: mysql
+        state: restarted
 
 - hosts: mysql_slave
   become: true

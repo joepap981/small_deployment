@@ -1,4 +1,8 @@
 ---
 - hosts: datastores
-  include: mysql_replication.yml
-  when: {{MYSQL_REPLICATION}}
+  become: true
+  vars_files:
+    - ../server_var.yml
+  tasks:
+    - name: test case
+      debug: msg="{{ MYSQL_REPLICATION }}"

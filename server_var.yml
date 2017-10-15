@@ -76,4 +76,6 @@ EDXAPP_PRESS_EMAIL: 'press@example.com'
 EDXAPP_LMS_ROOT_URL: "{{ EDXAPP_LMS_BASE_SCHEME | default('http') }}://{{ EDXAPP_LMS_BASE }}"
 
 #mySQL replication check
-MYSQL_REPLICATION: false
+MYSQL_REPLICATION: true
+MYSQL_SLAVE_USER: 'slave'
+MYSQL_SLAVE_PASSWORD: 'password'

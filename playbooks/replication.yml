@@ -1,0 +1,92 @@
+---
+#set up slave server
+- name: Install mySQL on Slave
+  apt: name={{item}} state=present
+  with_items:
+    - mysql-server
+    - mysql-client
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
+
+- name: Set MySQL configuration for Slave
+  lineinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
+  with_items:
+    - { regexp: '.server-id', line: 'server-id = 2' }
+    - { regexp: '.log_bin', line: 'log_bin = /var/log/mysql/mysql-bin.log' }
+    - { regexp: '.max_allowed_packet', line: 'max_allowed_packet      = 1G' }
+
+
+- name: Restart mySQL
+  service:
+    name: mysql
+    state: restarted
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
+
+#set up master server
+
+- name: Configure mySQL configuration for Master
+  lineinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '.server-id', line: 'server-id = 1' }
+    - { regexp: '.log_bin', line: 'log_bin = /var/log/mysql/mysql-bin.log' }
+    - { regexp: '.max_allowed_packet', line: 'max_allowed_packet      = 1G' }
+
+- name: Add binlog info
+  blockinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    block: |
+      binlog_do_db            = ecommerce
+      binlog_do_db            = edxapp
+      binlog_do_db            = edxapp_csmh
+      binlog_do_db            = xqueue
+
+- name: Restart mySQL
+  service:
+    name: mysql
+    state: restarted
+
+- name: Create mySQL Slave User
+  mysql_user: 
+    name: "{{ MYSQL_SLAVE_USER }}"
+    host: "%"
+    password: "{{ MYSQL_SLAVE_PASSWORD }}"
+    priv: "*.*:REPLICATION SLAVE"
+
+- name: Get Master Status
+  mysql_replication: mode=getmaster
+  register: master_status
+
+#migrate database from master to slave
+- name: Dump all databases to hostname.sql
+  mysql_db:
+    state: dump
+    name: all
+    target: /tmp/migrate.sql
+
+- name: Fetch migration database from Master
+  copy:
+    src: "/tmp/'{{ groups['datastores'][0] }}'/tmp/migrate.sql"
+    dest: /tmp/migrate.sql
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
+
+- name: Import migrate.sql
+  mysql_db:
+    state: import
+    name: all
+    target: /tmp/migrate.sql
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
+
+- name: Define master in slave
+  mysql_replication: mode=changemaster master_host="{{ groups['datastores'][0] }}" master_log_file={{ master_status.File }} master_log_pos={{ master_status.Position }} master_user="{{ MYSQL_SLAVE_USER }}" master_password="{{ MYSQL_SLAVE_PASSWORD }}"
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
+
+- name: start slave
+  mysql_replication: mode=startslave
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
+

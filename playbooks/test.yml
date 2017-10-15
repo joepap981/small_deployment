@@ -6,9 +6,3 @@
     - include: mysql_master_conf.yml
       when: MYSQL_REPLICATION  == true
 
-- hosts: mysql_slave
-  vars_files:
-    - "../server_var.yml"
-  tasks:
-    - include: mysql_slave_conf.yml
-      when: MYSQL_REPLICATION == true

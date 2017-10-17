@@ -66,13 +66,8 @@
 - name: Dump all databases to migrate.sql
   mysql_db:
     state: dump
-    name: "{{ item }}"
+    name: all
     target: /tmp/migrate.sql
-  with_items:
-    - ecommerce
-    - edxapp
-    - edxapp_csmh
-    - xqueue
 
 - name: Fetch migration database from Master
   shell: scp root@{{ groups['datastores'][0] }}:/tmp/migrate.sql ~/

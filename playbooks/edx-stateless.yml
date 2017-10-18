@@ -27,24 +27,24 @@
     XQUEUE_MYSQL_HOST: "{{ groups['datastores'][0] }}"
   roles:
     # Server setup
-#    - swapfile
+    - swapfile
 
     # Nginx reverse proxy
-#    - role: nginx
-#      nginx_sites:
-#      - certs
-#      - cms
-#      - lms
-#      - forum
-#      - xqueue
-#      nginx_default_sites:
-#      - lms
+    - role: nginx
+      nginx_sites:
+      - certs
+      - cms
+      - lms
+      - forum
+      - xqueue
+      nginx_default_sites:
+      - lms
 
     # Main EdX application
     # https://github.com/edx/edx-platform
-#    - role: edxapp
-#      celery_worker: True
-#    - edxapp
+    - role: edxapp
+      celery_worker: True
+    - edxapp
     # Discussion forums
     # https://github.com/edx/cs_comments_service
     - forum
@@ -85,6 +85,6 @@
 #mySQL replication
   tasks:
     - include: replication.yml
-      delegate_to: "{{ groups['mysql_slave'][0] }}"
+      delegate_to: "{{ groups['datastores'][0] }}"
       when: MYSQL_REPLICATION == true
 

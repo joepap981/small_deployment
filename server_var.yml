@@ -43,7 +43,7 @@ EDXAPP_EMAIL_HOST: 'smtp.gmail.com'
 EDXAPP_EMAIL_PORT: 587
 EDXAPP_EMAIL_USE_TLS: True
 EDXAPP_EMAIL_HOST_USER: 'handongmooc@gmail.com'
-EDXAPP_EMAIL_HOST_PASSWORD: ''
+EDXAPP_EMAIL_HOST_PASSWORD: 'handong1'
 
 
 #registeration fields

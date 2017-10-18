@@ -44,9 +44,28 @@
     target: /tmp/migrate.sql
 
 #set up slave server
-- name: Install mySQL
-  include_role: mysql
-  delegate_to: "{{ groups['mysql_slave'][0] }}"
+- name: Install mysql-5.6 and dependencies
+  apt:
+    name: "{{ item }}"
+    install_recommends: yes
+    state: present
+  with_items: 
+    - "mysql-server-5.6"
+    - python-mysqldb
+
+- name: Start mysql
+  service:
+    name: mysql
+    state: started
+
+- name: Ensure Anonymous user(s) does not exist
+  mysql_user:
+    name: ''
+    host: "{{ item }}"
+    state: absent
+  with_items:
+    - localhost
+    - "{{ ansible_hostname }}"
 
 - name: Set MySQL configuration for Slave
   lineinfile:

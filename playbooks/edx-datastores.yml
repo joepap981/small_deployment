@@ -24,7 +24,7 @@
   roles:
     # This install mysql and creates users.
     - role: memcache
-    - role: mongo_3_2
+    - role: mongo_2_6
     - role: rabbitmq
     - role: oraclejdk
     - role: elasticsearch

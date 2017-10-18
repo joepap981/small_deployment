@@ -84,9 +84,6 @@
 
 #mySQL replication
   tasks:
-    - include: create_mysql_users.yml
-    - include: address_binding.yml
-
     - include: replication.yml
       delegate_to: "{{ groups['mysql_slave'][0] }}"
       when: MYSQL_REPLICATION == true

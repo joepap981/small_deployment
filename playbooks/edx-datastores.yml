@@ -36,4 +36,7 @@
       when: COMMON_ENABLE_SPLUNKFORWARDER
     - role: newrelic
       when: COMMON_ENABLE_NEWRELIC
+  tasks:
+    - include: create_mysql_users.yml
+    - include: address_binding.yml
 

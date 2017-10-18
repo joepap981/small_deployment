@@ -1,30 +1,4 @@
 ---
-#set up slave server
-- name: Install mySQL on Slave
-  apt: name={{item}} state=present
-  with_items:
-    - mysql-server
-    - mysql-client
-  delegate_to: "{{ groups['mysql_slave'][0] }}"
-
-- name: Set MySQL configuration for Slave
-  lineinfile:
-    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
-  delegate_to: "{{ groups['mysql_slave'][0] }}"
-  with_items:
-    - { regexp: '.server-id', line: 'server-id = 2' }
-    - { regexp: '.log_bin', line: 'log_bin = /var/log/mysql/mysql-bin.log' }
-    - { regexp: '.max_allowed_packet', line: 'max_allowed_packet      = 1G' }
-
-
-- name: Restart mySQL
-  service:
-    name: mysql
-    state: restarted
-  delegate_to: "{{ groups['mysql_slave'][0] }}"
-
 #set up master server
 
 - name: Configure mySQL configuration for Master
@@ -69,13 +43,27 @@
     name: all
     target: /tmp/migrate.sql
 
-- name: Fetch migration database from Master
-  shell: scp root@{{ groups['datastores'][0] }}:/tmp/migrate.sql ~/
-  delegate_to: "127.0.0.1"
+#set up slave server
+- name: Install mySQL
+  include_role: mysql
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
 
-- name: Send migration database to Slave
-  shell: scp ~/migrate.sql root@{{ groups['mysql_slave'][0] }}:/tmp/migrate.sql
-  delegate_to: "127.0.0.1"
+- name: Set MySQL configuration for Slave
+  lineinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
+  with_items:
+    - { regexp: '.server-id', line: 'server-id = 2' }
+    - { regexp: '.log_bin', line: 'log_bin = /var/log/mysql/mysql-bin.log' }
+    - { regexp: '.max_allowed_packet', line: 'max_allowed_packet      = 1G' }
+
+- name: Restart mySQL
+  service:
+    name: mysql
+    state: restarted
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
 
 - name: Import migrate.sql
   mysql_db:
@@ -88,7 +76,7 @@
   mysql_replication: mode=changemaster master_host="{{ groups['datastores'][0] }}" master_log_file={{ master_status.File }} master_log_pos={{ master_status.Position }} master_user="{{ MYSQL_SLAVE_USER }}" master_password="{{ MYSQL_SLAVE_PASSWORD }}"
   delegate_to: "{{ groups['mysql_slave'][0] }}"
 
-- name: start slave
+- name: Start slave
   mysql_replication: mode=startslave
   delegate_to: "{{ groups['mysql_slave'][0] }}"
 

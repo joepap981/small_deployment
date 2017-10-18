@@ -79,3 +79,17 @@ EDXAPP_LMS_ROOT_URL: "{{ EDXAPP_LMS_BASE_SCHEME | default('http') }}://{{ EDXAPP
 MYSQL_REPLICATION: true
 MYSQL_SLAVE_USER: 'slave'
 MYSQL_SLAVE_PASSWORD: 'password'
+
+#mongoDB replication check
+MONGO_BIND_IP: 127.0.0.1
+MONGO_ADMIN_USER: 'admin'
+MONGO_ADMIN_PASSWORD: 'password'
+
+MONGO_REPL_SET: "rs0"
+MONGO_AUTH: true
+
+MONGO_RS_CONFIG:
+  _id: '{{ MONGO_REPL_SET }}'
+  members:
+- host: "{{ groups['datastores'][0] }}"
+#       "{{ groups['mongo_repl'][0] }}"

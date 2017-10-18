@@ -8,5 +8,5 @@ export LC_CTYPE="en_US.UTF-8"
 sudo dpkg-reconfigure locales
 
 #install requirements and ansible
-sudo bash requirements/ansible-bootstrap.sh
-sudo bash requirements/sandbox.sh
+sudo bash ~/small_deployment/requirements/ansible-bootstrap.sh
+sudo bash ~/small_deployment/requirements/sandbox.sh

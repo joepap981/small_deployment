@@ -1,6 +1,8 @@
 ---
 #set up master server
-- hosts: datastores
+- name: Set up Datastores master server
+  hosts: datastores
+  become: yes
   vars_files:
     - ../server_var.yml
   tasks:
@@ -46,20 +48,35 @@
         name: all
         target: /tmp/migrate.sql
 
+- name: Move DB file from datastores to slave
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Copy DB file from datastores to master
+      command: scp root@"{{ groups['datastores'][0] }}":/tmp/migrate.sql /tmp/migrate.sql
+
+    - name: Copy DB file from master to mysql_slave
+      command: scp /tmp/migrate.sql root@"{{ groups['mysql_slave'][0] }}":/tmp/migrate.sql
+
   #set up slave server
+- name: Set up mysql_slave server
+  hosts: mysql_slave
+  tasks:
     - name: Install mysql-5.6 and dependencies
       apt:
         name: "{{ item }}"
         install_recommends: yes
         state: present
       with_items: 
-        - "mysql-server-5.6"
+        - mysql-server-5.6
         - python-mysqldb
+      delegate_to: "{{ groups['mysql_slave'][0] }}"
 
     - name: Start mysql
       service:
         name: mysql
         state: started
+      delegate_to: "{{ groups['mysql_slave'][0] }}"
 
     - name: Ensure Anonymous user(s) does not exist
       mysql_user:
@@ -69,6 +86,7 @@
       with_items:
         - localhost
         - "{{ ansible_hostname }}"
+      delegate_to: "{{ groups['mysql_slave'][0] }}"
 
     - name: Set MySQL configuration for Slave
       lineinfile:

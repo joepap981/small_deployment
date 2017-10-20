@@ -1,4 +1,8 @@
 ---
+- name: Install Postfix
+  apt:
+    name: postfix
+    state: present
 - name: Set MySQL bind-address
   lineinfile:
     dest: /etc/mysql/mysql.conf.d/mysqld.cnf

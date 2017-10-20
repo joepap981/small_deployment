@@ -1,8 +1,0 @@
----
-- hosts: datastores
-  vars_files:
-    - "../server_var.yml"
-  tasks:
-    - include: replication.yml
-      when: MYSQL_REPLICATION  == true
-

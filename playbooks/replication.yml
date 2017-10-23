@@ -1,117 +1,112 @@
----
-#set up master server
-- name: Set up Datastores master server
-  hosts: datastores
-  become: yes
-  vars_files:
-    - ../server_var.yml
-  tasks:
-    - name: Configure mySQL configuration for Master
-      lineinfile:
-        dest: /etc/mysql/mysql.conf.d/mysqld.cnf
-        regexp: "{{ item.regexp }}"
-        line: "{{ item.line }}"
-      with_items:
-        - { regexp: '.server-id', line: 'server-id = 1' }
-        - { regexp: '.log_bin', line: 'log_bin = /var/log/mysql/mysql-bin.log' }
-        - { regexp: '.max_allowed_packet', line: 'max_allowed_packet      = 1G' }
 
-    - name: Add binlog info
-      blockinfile:
-        dest: /etc/mysql/mysql.conf.d/mysqld.cnf
-        block: |
-          binlog_do_db            = ecommerce
-          binlog_do_db            = edxapp
-          binlog_do_db            = edxapp_csmh
-          binlog_do_db            = xqueue
+- name: Configure mySQL configuration for Master
+  lineinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '.server-id', line: 'server-id = 1' }
+    - { regexp: '.log_bin', line: 'log_bin = /var/log/mysql/mysql-bin.log' }
+    - { regexp: '.max_allowed_packet', line: 'max_allowed_packet      = 1G' }
 
-    - name: Restart mySQL
-      service:
-        name: mysql
-        state: restarted
+- name: Add binlog info
+  blockinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    block: |
+      binlog_do_db            = ecommerce
+      binlog_do_db            = edxapp
+      binlog_do_db            = edxapp_csmh
+      binlog_do_db            = xqueue
 
-    - name: Create mySQL Slave User
-      mysql_user: 
-        name: "{{ MYSQL_SLAVE_USER }}"
-        host: "%"
-        password: "{{ MYSQL_SLAVE_PASSWORD }}"
-        priv: "*.*:REPLICATION SLAVE"
+- name: Restart mySQL
+  service:
+    name: mysql
+    state: restarted
 
-  #migrate database from master to slave
-    - name: Dump all databases to migrate.sql
-      mysql_db:
-        state: dump
-        name: all
-        target: /tmp/migrate.sql
+- name: Create mySQL Slave User
+  mysql_user:
+    name: "{{ MYSQL_SLAVE_USER }}"
+    host: "%"
+    password: "{{ MYSQL_SLAVE_PASSWORD }}"
+    priv: "*.*:REPLICATION SLAVE"
 
-- name: Move DB file from datastores to slave
-  hosts: localhost
-  connection: local
-  tasks:
-    - name: Copy DB file from datastores to master
-      command: scp root@"{{ groups['datastores'][0] }}":/tmp/migrate.sql /tmp/migrate.sql
+#migrate database from master to slave
+- name: Dump all databases to migrate.sql
+  mysql_db:
+    state: dump
+    name: all
+    target: /tmp/migrate.sql
 
-    - name: Copy DB file from master to mysql_slave
-      command: scp /tmp/migrate.sql root@"{{ groups['mysql_slave'][0] }}":/tmp/migrate.sql
+- name: Copy DB file from datastores to master
+  command: scp root@"{{ groups['datastores'][0] }}":/tmp/migrate.sql /tmp/migrate.sql
+  delegate_to: "{{ groups['localhost'][0] }}"
 
-  #set up slave server
-- name: Set up mysql_slave server
-  hosts: mysql_slave
-  vars_files:
-    - ../server_var.yml
-  tasks:
-    - name: Install mysql-5.6 and dependencies
-      apt:
-        name: "{{ item }}"
-        install_recommends: yes
-        state: present
-      with_items: 
-        - mysql-server-5.6
-        - python-mysqldb
+- name: Copy DB file from master to mysql_slave
+  command: scp /tmp/migrate.sql root@"{{ groups['mysql_slave'][0] }}":/tmp/migrate.sql
+  delegate_to: "{{ groups['localhost'][0] }}"
 
-    - name: Start mysql
-      service:
-        name: mysql
-        state: started
+ 
+- name: Install mysql-5.6 and dependencies
+  apt:
+    name: "{{ item }}"
+    install_recommends: yes
+    state: present
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
+  with_items: 
+    - mysql-server-5.6
+    - python-mysqldb
 
-    - name: Ensure Anonymous user(s) does not exist
-      mysql_user:
-        name: ''
-        host: "{{ item }}"
-        state: absent
-      with_items:
-        - localhost
-        - "{{ ansible_hostname }}"
+- name: Start mysql
+  service:
+    name: mysql
+    state: started
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
 
-    - name: Set MySQL configuration for Slave
-      lineinfile:
-        dest: /etc/mysql/mysql.conf.d/mysqld.cnf
-        regexp: "{{ item.regexp }}"
-        line: "{{ item.line }}"
-      with_items:
-        - { regexp: '.server-id', line: 'server-id = 2' }
-        - { regexp: '.log_bin', line: 'log_bin = /var/log/mysql/mysql-bin.log' }
-        - { regexp: '.max_allowed_packet', line: 'max_allowed_packet      = 1G' }
+- name: Ensure Anonymous user(s) does not exist
+  mysql_user:
+    name: ''
+    host: "{{ item }}"
+    state: absent
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
+  with_items:
+    - localhost
+    - "{{ ansible_hostname }}"
 
-    - name: Restart mySQL
-      service:
-        name: mysql
-        state: restarted
+- name: Set MySQL configuration for Slave
+  lineinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
+  with_items:
+    - { regexp: '.server-id', line: 'server-id = 2' }
+    - { regexp: '.log_bin', line: 'log_bin = /var/log/mysql/mysql-bin.log' }
+    - { regexp: '.max_allowed_packet', line: 'max_allowed_packet      = 1G' }
 
-    - name: Import migrate.sql
-      mysql_db:
-        state: import
-        name: all
-        target: /tmp/migrate.sql
+- name: Restart mySQL
+  service:
+    name: mysql
+    state: restarted
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
 
-    - name: Get Master Status
-      mysql_replication: mode=getmaster
-      register: master_status
-      delegate_to: "{{ groups['datastores'][0] }}"
+- name: Import migrate.sql
+  mysql_db:
+    state: import
+    name: all
+    target: /tmp/migrate.sql
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
 
-    - name: Define master in slave
-      mysql_replication: mode=changemaster master_host="{{ groups['datastores'][0] }}" master_log_file={{ master_status.File }} master_log_pos={{ master_status.Position }} master_user="{{ MYSQL_SLAVE_USER }}" master_password="{{ MYSQL_SLAVE_PASSWORD }}"
+- name: Get Master Status
+  mysql_replication: mode=getmaster
+  register: master_status
+  delegate_to: "{{ groups['datastores'][0] }}"
 
-    - name: Start slave
-      mysql_replication: mode=startslave
+- name: Define master in slave
+  mysql_replication: mode=changemaster master_host="{{ groups['datastores'][0] }}" master_log_file={{ master_status.File }} master_log_pos={{ master_status.Position }} master_user="{{ MYSQL_SLAVE_USER }}" master_password="{{ MYSQL_SLAVE_PASSWORD }}"
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
+
+- name: Start slave
+  mysql_replication: mode=startslave
+  delegate_to: "{{ groups['mysql_slave'][0] }}"
+
 

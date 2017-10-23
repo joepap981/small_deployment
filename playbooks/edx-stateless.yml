@@ -27,66 +27,69 @@
     FORUM_ELASTICSEARCH_HOST: "{{ groups['datastores'][0] }}"
     XQUEUE_RABBITMQ_HOSTNAME: "{{ groups['datastores'][0] }}"
     XQUEUE_MYSQL_HOST: "{{ groups['datastores'][0] }}"
-#  roles:
+  roles:
     # Server setup
-#    - swapfile
+    - swapfile
 
     # Nginx reverse proxy
-#    - role: nginx
-#      nginx_sites:
-#      - certs
-#      - cms
-#      - lms
-#      - forum
-#      - xqueue
-#      nginx_default_sites:
-#      - lms
+    - role: nginx
+      nginx_sites:
+      - certs
+      - cms
+      - lms
+      - forum
+      - xqueue
+      nginx_default_sites:
+      - lms
 
     # Main EdX application
     # https://github.com/edx/edx-platform
-#    - role: edxapp
-#      celery_worker: True
-#    - edxapp
+    - role: edxapp
+      celery_worker: True
+    - edxapp
     # Discussion forums
     # https://github.com/edx/cs_comments_service
-#    - forum
+    - forum
 
     # Notifications service
     # https://github.com/edx/notifier
-#    - role: notifier
-#      NOTIFIER_DIGEST_TASK_INTERVAL: '5'
+    - role: notifier
+      NOTIFIER_DIGEST_TASK_INTERVAL: '5'
 
     # XQueue interface for communicating with external grader services
     # https://github.com/edx/xqueue
-#    - role: xqueue
-#      update_users: True
+    - role: xqueue
+      update_users: True
 
     # Certificate generation
     # https://github.com/edx/edx-certificates
-#    - certs
+    - certs
 
     # Ecommerce (optional)
     # https://github.com/edx/ecommerce
-#    - role: nginx
-#      nginx_sites:
-#      - ecommerce
-#      when: ENABLE_ECOMMERCE
-#    - role: ecommerce
-#      when: ENABLE_ECOMMERCE
-#    - role: ecomworker
-#      when: ENABLE_ECOMMERCE
+    - role: nginx
+      nginx_sites:
+      - ecommerce
+      when: ENABLE_ECOMMERCE
+    - role: ecommerce
+      when: ENABLE_ECOMMERCE
+    - role: ecomworker
+      when: ENABLE_ECOMMERCE
 
     # Optional extras
-#    - role: datadog
-#      when: COMMON_ENABLE_DATADOG
-#    - role: splunkforwarder
-#      when: COMMON_ENABLE_SPLUNKFORWARDER
-#    - role: newrelic
-#      when: COMMON_ENABLE_NEWRELIC
+    - role: datadog
+      when: COMMON_ENABLE_DATADOG
+    - role: splunkforwarder
+      when: COMMON_ENABLE_SPLUNKFORWARDER
+    - role: newrelic
+      when: COMMON_ENABLE_NEWRELIC
 
 #mySQL replication
+- name: MySQL Replication
+  hosts: datastores
+  vars_files:
+    - ../server_var.yml
   tasks:
     - include: replication.yml
-      delegate_to: "{{ groups['datastores'][0] }}"
       when: MYSQL_REPLICATION == true
 

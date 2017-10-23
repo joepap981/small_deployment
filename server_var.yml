@@ -81,9 +81,13 @@ MYSQL_SLAVE_USER: 'slave'
 MYSQL_SLAVE_PASSWORD: 'password'
 
 #mongoDB replication check
-MONGO_BIND_IP: 127.0.0.1
+MONGO_BIND_IP: 0.0.0.0
 MONGO_ADMIN_USER: 'admin'
 MONGO_ADMIN_PASSWORD: 'password'
 
-MONGO_REPL_SET: "rs0"
+mongo_repl_set: rs0
 MONGO_AUTH: true
+MONGO_CLUSTERED: false
+mongo_cluster_members: ['172.31.0.123']
+mongo_key_file: '~/mongodb-keyfile'
+MONGO_CLUSTER_KEY: '~/mongodb-keyfile'

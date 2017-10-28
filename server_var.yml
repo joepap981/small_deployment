@@ -87,7 +87,23 @@ MONGO_ADMIN_PASSWORD: 'password'
 
 mongo_repl_set: rs0
 MONGO_AUTH: true
-MONGO_CLUSTERED: false
-mongo_cluster_members: ['172.31.0.123']
-mongo_key_file: '~/mongodb-keyfile'
-MONGO_CLUSTER_KEY: '~/mongodb-keyfile'
+MONGO_CLUSTERED: true
+MONGO_CLUSTER_KEY: 
+  'sPNgdO3DMNUGqw4s8+4hTVJWa/Lbzj4cJMIXTDv4gYCdkCeAP2lEtHPE9x/pT9b1
+aQdrjnUhYKheXSJi8/4ctBhDlCJdjkGEK0RPLneEv3niU33TWv9pAhBJQqd9XFIg
+T2vAPOrJUuTNYxu1REiviucfML5DdkqUW6TMDenFQAPXD3aPPdPS9PkZ4EgSTXka
+iCO5WLMZdBm+Gj8NkZECctdz/ISGISLEROWxD5/pnQ4NYmmrMv9Z7M6pUpJ64kvL
+loxTo8orDGp4IBuRDDIb6SATFJfnXmVIa2cIO+kCb+O1KRUC5FcHj41d8teBUjY9
+qX2cF6xxQb7NVeS6jIUX+zHgoVB61M5K7+UPUbwLvtLBw97K60lxTNa3os6MoGgr
+DTGBpUubuQqYZoFAqIPdPcv6dib6lqlz0QD5zUnrAzw6V4chyoe2KTFTeQY62jTe
+uBQH1P39tWDgwI1Q9w4vbgceo5iBQdSBBUJ11NbvilJK2niBAdMzlQjHmlbdIXuv
+mGLcMv3OFhBb7JIdeMxI+A1c1ULVsRuTwH5MavkOlIsq7DKeCbzy65HM4tpQ1wDJ
+keOLDBA2RU8pfl0crYtisg0tt6PAyrLYkCMxJkzKWDQXA8+VJ49ibwB5Vh3sJynG
+1LhDDhB3pwqFXOQhJS+bX2cqrEcdaeShCjfx5pSxDnvHi4mYtCDv8bvQQpqx1Zjz
+2fm2YHecqxEBVzjnM5OoPXDGkyLTUeGLyrpVl4R+Ssi0Eq9CAi2PvuWrRqRUuFME
+APtYd3b3S8yrsjamBSs7vVmbSuxwgv5qJEWRBnkzBBv2ja1bN5uHIMFhbVCDOi/c
+aCcrHDss/A5F72WdFD76Z1SatpQyEeHxoExLdQs0+AaKvuI4XcHRvuiwmJloiY52
+ZviNvyM1crlqkijdSl3IlDiOQnwltnerVkr5Y/9Ir8jWWPzYAmNGT70e5y+iQLlk
+fQACcRVSmz1YjFkHcw4c0WXeTY3l'
+mongo_cluster_members: ['172.31.25.54', '172.31.0.23']
+mongo_key_file: '/edx/var/mongo/mongodb-keyfile'

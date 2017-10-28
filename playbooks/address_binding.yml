@@ -12,15 +12,15 @@
   service:
     name: mysql
     state: restarted
-- name: Set MongoDB bind_ip
-  lineinfile:
-    dest: /etc/mongod.conf
-    regexp: '^bind_ip'
-    line: 'bind_ip = 0.0.0.0'
-- name: Restart mongod
-  service:
-    name: mongod
-    state: restarted
+#- name: Set MongoDB bind_ip
+#  lineinfile:
+#    dest: /etc/mongod.conf
+#    regexp: '^bind_ip'
+#    line: 'bind_ip = 0.0.0.0'
+#- name: Restart mongod
+#  service:
+#    name: mongod
+#    state: restarted
 - name: Set memcached address
   lineinfile:
     dest: /etc/memcached.conf

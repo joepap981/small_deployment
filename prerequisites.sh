@@ -10,3 +10,6 @@ sudo dpkg-reconfigure locales
 #install requirements and ansible
 sudo bash requirements/ansible-bootstrap.sh
 sudo bash requirements/sandbox.sh
+
+#Configure SSH Settings
+ansible-playbook -inventory.ini playbooks/setup.yml

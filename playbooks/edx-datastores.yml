@@ -25,6 +25,7 @@
     # This install mysql and creates users.
     - role: memcache
     - role: mongo_2_6
+      delegate_to: {{ groups['mongodb'][0] }}
     - role: rabbitmq
     - role: oraclejdk
     - role: elasticsearch

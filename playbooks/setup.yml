@@ -3,13 +3,8 @@
   hosts: localhost
   connection: local
   become: true
-  vars:
-    - UBUNTU_ROOT_PASSWORD: edx
 
   tasks:
-    - name: Password rollover
-      user: name=root password="{{ UBUNTU_ROOT_PASSWORD }}"
-
     - name: Setup SSH settings
       template:
         src: "templates/sshd_conf.j2"

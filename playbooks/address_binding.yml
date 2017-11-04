@@ -17,7 +17,7 @@
     dest: /etc/mongod.conf
     regexp: '^bind_ip'
     line: 'bind_ip = 0.0.0.0'
-  delegate_to: {{ groups['mongodb'][0] }}
+  delegate_to: "{{ groups['course_db'][0] }}"
 - name: Restart mongod
   service:
     name: mongod

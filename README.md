@@ -5,7 +5,7 @@ Simple two server deployment for Open edX
 
 * hello
 
-  this is in the same paragraph  
+  this is in the same paragraph 
 as the other ones
   
 * this is a list of
